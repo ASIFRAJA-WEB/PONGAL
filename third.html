@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Pongal</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Tamil:wght@600&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Noto Serif Tamil', serif;
+  background: linear-gradient(to top, #1e3c72, #2a5298);
+  color: white;
+  text-align: center;
+  overflow: hidden;
+}
+
+.container {
+  min-height: 100vh;
+  padding: 20px 15px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-top: 20px;
+}
+
+input {
+  width: 85%;
+  max-width: 320px;
+  padding: 12px;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  text-align: center;
+  font-size: 1rem;
+  margin-top: 15px;
+}
+
+#wish {
+  margin-top: 20px;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  padding: 0 10px;
+}
+
+.share {
+  margin-top: 15px;
+  padding: 10px 22px;
+  border-radius: 25px;
+  border: none;
+  font-weight: bold;
+  font-size: 0.9rem;
+  background: #25d366;
+  color: white;
+}
+
+.footer {
+  position: fixed;
+  bottom: 10px;
+  width: 100%;
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+/* Confetti */
+.confetti {
+  position: fixed;
+  width: 8px;
+  height: 14px;
+  background: red;
+  top: -20px;
+  animation: fall linear infinite;
+}
+
+@keyframes fall {
+  0% { transform: translateY(0) rotate(0); }
+  100% { transform: translateY(110vh) rotate(360deg); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>🌾 இனிய பொங்கல் நல்வாழ்த்துகள் 🌾</h1>
+
+  <input type="text" id="name" placeholder="உங்கள் பெயர் எழுதுங்கள்" oninput="updateWish()">
+
+  <div id="wish"></div>
+
+  <button class="share" onclick="shareWhatsApp()">WhatsApp Share</button>
+</div>
+
+<div class="footer">
+  Created by <b>Asif Raja</b>
+</div>
+
+<script>
+// Read name from URL
+const params = new URLSearchParams(window.location.search);
+const urlName = params.get("name");
+if (urlName) {
+  document.getElementById("name").value = decodeURIComponent(urlName);
+  updateWish();
+}
+
+// Auto wish
+function updateWish() {
+  const name = document.getElementById("name").value.trim();
+  const wish = document.getElementById("wish");
+
+  if (!name) {
+    wish.innerHTML = "";
+    return;
+  }
+
+  wish.innerHTML = `🌾 <b>${name}</b>, உங்களுக்கும் உங்கள் குடும்பத்தினருக்கும்<br>
+  இனிய பொங்கல் நல்வாழ்த்துகள்! 🎉<br>
+  சந்தோஷம், ஆரோக்கியம், வெற்றி எப்போதும் உங்களுடன் இருக்கட்டும் 🌞`;
+}
+
+// WhatsApp share with name in link
+function shareWhatsApp() {
+  const name = document.getElementById("name").value.trim();
+  if (!name) {
+    alert("முதலில் பெயர் உள்ளிடுங்கள்!");
+    return;
+  }
+
+  const link = window.location.origin + window.location.pathname + "?name=" + encodeURIComponent(name);
+  const text = `🌾 ${name} க்கு இனிய பொங்கல் நல்வாழ்த்துகள்! 🎉\n\nOpen here:\n${link}`;
+  const url = "https://wa.me/?text=" + encodeURIComponent(text);
+  window.open(url, "_blank");
+}
+
+// Confetti generator
+function createConfetti() {
+  const confetti = document.createElement("div");
+  confetti.classList.add("confetti");
+
+  const colors = ["#ff5252", "#ffeb3b", "#69f0ae", "#40c4ff", "#e040fb"];
+  confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+  confetti.style.left = Math.random() * 100 + "vw";
+  confetti.style.animationDuration = (2 + Math.random() * 3) + "s";
+
+  document.body.appendChild(confetti);
+
+  setTimeout(() => {
+    confetti.remove();
+  }, 5000);
+}
+
+setInterval(createConfetti, 150);
+</script>
+
+</body>
+</html>
