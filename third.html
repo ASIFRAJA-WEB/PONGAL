@@ -23,6 +23,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
 }
 
 h1 {
@@ -42,11 +43,18 @@ input {
   margin-top: 15px;
 }
 
+/* Wish fade-in */
 #wish {
   margin-top: 20px;
   font-size: 1.1rem;
   line-height: 1.6;
   padding: 0 10px;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+#wish.show {
+  opacity: 1;
 }
 
 .share {
@@ -60,12 +68,27 @@ input {
   color: white;
 }
 
-.footer {
-  position: fixed;
-  bottom: 10px;
-  width: 100%;
-  font-size: 0.85rem;
-  opacity: 0.85;
+/* Side pot */
+.pot {
+  position: absolute;
+  right: 10px;
+  bottom: 80px;
+  width: 90px;
+  height: 60px;
+  background: #7b3f1d;
+  border-radius: 0 0 40px 40px;
+  opacity: 0.8;
+}
+
+.pot::before {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: 0;
+  width: 90px;
+  height: 18px;
+  background: #9c4f26;
+  border-radius: 50%;
 }
 
 /* Confetti */
@@ -73,7 +96,6 @@ input {
   position: fixed;
   width: 8px;
   height: 14px;
-  background: red;
   top: -20px;
   animation: fall linear infinite;
 }
@@ -81,6 +103,14 @@ input {
 @keyframes fall {
   0% { transform: translateY(0) rotate(0); }
   100% { transform: translateY(110vh) rotate(360deg); }
+}
+
+.footer {
+  position: fixed;
+  bottom: 10px;
+  width: 100%;
+  font-size: 0.85rem;
+  opacity: 0.85;
 }
 </style>
 </head>
@@ -95,6 +125,8 @@ input {
   <div id="wish"></div>
 
   <button class="share" onclick="shareWhatsApp()">WhatsApp Share</button>
+
+  <div class="pot"></div>
 </div>
 
 <div class="footer">
@@ -102,27 +134,35 @@ input {
 </div>
 
 <script>
-// Read name from URL
+const wishBox = document.getElementById("wish");
+
+// Get name from link but DO NOT show immediately
 const params = new URLSearchParams(window.location.search);
 const urlName = params.get("name");
 if (urlName) {
   document.getElementById("name").value = decodeURIComponent(urlName);
-  updateWish();
+  setTimeout(() => {
+    showWish();
+  }, 800); // fade-in delay
 }
 
-// Auto wish
 function updateWish() {
-  const name = document.getElementById("name").value.trim();
-  const wish = document.getElementById("wish");
+  showWish();
+}
 
+function showWish() {
+  const name = document.getElementById("name").value.trim();
   if (!name) {
-    wish.innerHTML = "";
+    wishBox.classList.remove("show");
+    wishBox.innerHTML = "";
     return;
   }
 
-  wish.innerHTML = `🌾 <b>${name}</b>, உங்களுக்கும் உங்கள் குடும்பத்தினருக்கும்<br>
+  wishBox.innerHTML = `🌾 <b>${name}</b>, உங்களுக்கும் உங்கள் குடும்பத்தினருக்கும்<br>
   இனிய பொங்கல் நல்வாழ்த்துகள்! 🎉<br>
   சந்தோஷம், ஆரோக்கியம், வெற்றி எப்போதும் உங்களுடன் இருக்கட்டும் 🌞`;
+
+  wishBox.classList.add("show");
 }
 
 // WhatsApp share with name in link
@@ -139,7 +179,7 @@ function shareWhatsApp() {
   window.open(url, "_blank");
 }
 
-// Confetti generator
+// Confetti
 function createConfetti() {
   const confetti = document.createElement("div");
   confetti.classList.add("confetti");
@@ -151,9 +191,7 @@ function createConfetti() {
 
   document.body.appendChild(confetti);
 
-  setTimeout(() => {
-    confetti.remove();
-  }, 5000);
+  setTimeout(() => confetti.remove(), 5000);
 }
 
 setInterval(createConfetti, 150);
@@ -161,3 +199,4 @@ setInterval(createConfetti, 150);
 
 </body>
 </html>
+
